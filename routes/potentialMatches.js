@@ -34,12 +34,12 @@ router.get("/:id", checkSession, async (req, res) => {
     if (currentUser.isPaused) {
       const uId = req.params.id;
       const user = await userData.get(uId);
-      return res.render("profile/pausedProfile", { user });
+      const title="Paused Profile"
+      return res.render("profile/pausedProfile", { user,title:title });
     }
 
     // Check the "distance" query parameter
     const distance = req.query.distance || "all";
-    // console.log(distance);
 
     // Define the $and query for finding potential matches
     const andQuery = [
@@ -108,6 +108,7 @@ router.get("/:id", checkSession, async (req, res) => {
       users: potentialMatchesWithFlags,
       userId: userId,
       distance: distance,
+      title: "Potential Matches"
     });
   } catch (error) {
     res.status(500).render("error", { error: error });
@@ -168,11 +169,8 @@ router.post("/:id/like", checkSession, async (req, res) => {
           )
 
         }
-        console.log(likedUser);
       }
 
-
-    console.log(distance);
     res.redirect("/potentialMatches/" + userId + "?distance=" + distance);
   } catch (error) {
     res.status(500).render("error", { error: error });

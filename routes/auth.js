@@ -29,10 +29,10 @@ const uploadImage = upload.single("image");
 router.route("/").get(async (req, res,next) => {
 
   if(req.session && req.session.userId){
-
-          res.redirect("/home/" + req.session.userId);
+    res.redirect("/home/" + req.session.userId);
   } else {
-    res.render("about", { title: "about" });
+    const message = req.query.message || null;
+    res.render("about", { title: "about", message: message });
   }
 }, async(req,res) => {
   try {
@@ -153,8 +153,6 @@ router
         gym,
         place);
 
-      // console.log(im);
-
       res.redirect("/login");
     } catch (error) {
       console.log(error);
@@ -180,7 +178,6 @@ router.route("/logout").get(async (req, res) => {
   
   router.route("/validateUser").post(async (req, res) => {
     const regData = req.body;
-    console.log("Reg Data: "+ JSON.stringify(regData));
     if (!regData || Object.keys(regData).length === 0) {
       return res
       .status(400)
@@ -197,7 +194,6 @@ router.route("/logout").get(async (req, res) => {
     const userCollection = await users();
     const email = xss(req.body.email);
     const user = await userCollection.findOne({email: email});
-    console.log("User: "+user);
 
     if(user){
       res.status(200).send({exists: true});
@@ -218,7 +214,8 @@ router.route("/logout").get(async (req, res) => {
      }
      await userData.deleteUserById(id);
      req.session.destroy();
-     res.redirect("/login");
+     const message = "Your account has been successfully deleted.";
+     res.redirect(`/?message=${message}`);
    } catch (error) {
      res.status(500).render("error", { error: error });
    }

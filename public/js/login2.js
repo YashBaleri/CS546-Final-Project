@@ -9,8 +9,6 @@ function checkEmail(email, varName) {
   if (typeof email !== "string") {
     throw `${varName} must be a string`;
   }
-  console.log(email);
-  // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   if (!emailRegex.test(email)) {
     throw `The ${varName} must be a valid email address`;
@@ -37,7 +35,7 @@ function checkPassword(password, varName) {
 }
 
 emailInput.on("input", () => {
-  const email = emailInput.val().trim();
+  const email = emailInput.val().trim().toLowerCase();
 
   if (email === "") {
     $("#email-status").html("");

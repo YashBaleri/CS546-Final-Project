@@ -9,7 +9,7 @@ dotenv.config();
 //TODO - ASK TA/PROF if passwords need to be encrypted in database or the routing file
 import bcrypt from "bcrypt";
 import validation from "../validation.js";
-const saltRounds = 1; // TODO change it to 16 at final
+const saltRounds = 16; // TODO change it to 16 at final
 
 export const create = async (
   name,
@@ -27,9 +27,26 @@ export const create = async (
   gym,
   bucketlist
 ) => {
+  if(!image_destination || !image_filename || !image_path){
+    throw new Error ('no image found');
+  }
+
+  if(!zip){
+    throw new Error ('zip code not found');
+  }
+
+  if(!gender){
+    throw new Error ('gender not found');
+  }
+
+  if(!university || !gym || !bucketlist){
+    throw new Error ('inputs not found');
+  }
+
   name = validation.checkString(name, "Name");
   work = validation.checkString(work, "Work");
   email = validation.checkEmail(email, "Email");
+  email = email.toLowerCase();
   password = validation.checkPassword(password, "Password");
   age = validation.checkAge(age, "Age");
   bio = validation.checkString(bio, "Bio");
@@ -119,6 +136,7 @@ export const get = async (id) => {
 
 export const loginAuth = async (email, password) => {
   email = validation.checkEmail(email, "Email");
+  email = email.toLowerCase();
   password = validation.checkPassword(password, "Password");
   const userCollection = await users();
   const inDb = await userCollection.findOne({ email: email });
